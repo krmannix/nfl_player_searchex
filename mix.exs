@@ -15,7 +15,7 @@ defmodule NFLPlayerSearchex.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -30,6 +30,7 @@ defmodule NFLPlayerSearchex.Mixfile do
   defp deps do
     [
       {:floki, "~> 0.17.2"},
+      {:httpoison, "~> 0.12.0"},
     ]
   end
 end
