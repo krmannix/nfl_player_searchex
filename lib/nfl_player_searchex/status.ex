@@ -7,11 +7,10 @@ defmodule NFLPlayerSearchex.Status do
     "SUS" => "Suspended",
     "PUP" => "Physically unable to perform",
     "UDF" => "Unsigned draft pick",
+    "UFA" => "Unrestricted Free Agent",
     "EXE" => "Exempt",
   }
 
-  def get_status_description_from_status(status) do
-    Map.get(@status_map, status)
-  end
+  def get_status_description_from_status(status), do: Map.get(@status_map, status)
 
 end

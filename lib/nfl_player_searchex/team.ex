@@ -34,12 +34,6 @@ defmodule NFLPlayerSearchex.Team do
     "WAS" => "Washington Redskins",
   }
 
-  def get_team_long_from_team_short(team_short) do
-    IO.puts "team_short"
-    IO.inspect team_short
-    IO.inspect Map.get(@team_long_to_team_short, team_short)
-
-    Map.get(@team_long_to_team_short, team_short)
-  end
+  def get_team_long_from_team_short(team_short), do: Map.get(@team_long_to_team_short, team_short)
 
 end

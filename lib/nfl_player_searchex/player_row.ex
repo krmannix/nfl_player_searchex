@@ -4,35 +4,71 @@ defmodule NFLPlayerSearchex.PlayerRow do
     build_player_from_cells(player_cells)
   end
 
+  # clean this up. look at filter_map
   defp build_player_from_cells(cells) do
-    get_player_function_map()
-    |> Enum.map(fn {k, {index, func}} -> {k, func.(Enum.fetch!(cells, index))} end)
-    |> Enum.into(%{})
+    Enum.map_every(4..11, 2, &build_player_stat_from_cell(cells, &1))
+    |> Enum.filter(&is_tuple(&1))
+    |> Enum.into(build_basic_player_map(cells))
   end
 
-  defp get_player_function_map do
+  defp build_basic_player_map(cells) do
     %{
-      position: {0, &get_pos_from_cell(&1)},
-      jersey_number: {1, &get_integer_from_cell(&1)},
-      name: {2, &get_name_from_cell(&1)},
-      status: {3, &get_status_from_cell(&1)},
-      status_description: {3, &get_status_description_from_cell(&1)},
-      attempts: {5, &get_integer_from_cell(&1)},
-      yards: {7, &get_float_from_cell(&1)},
-      average_yards_per_attempt: {9, &get_float_from_cell(&1)},
-      touchdowns: {11, &get_integer_from_cell(&1)},
-      team_short: {12, &get_team_short_from_cell(&1)},
-      team_long: {12, &get_team_long_from_cell(&1)},
+      position: get_pos_from_cell(Enum.fetch!(cells, 0)),
+      jersey_number: get_integer_from_cell(Enum.fetch!(cells, 1)),
+      name: get_name_from_cell(Enum.fetch!(cells, 2)),
+      status: get_status_from_cell(Enum.fetch!(cells, 3)),
+      status_description: get_status_description_from_cell(Enum.fetch!(cells, 3)),
+      team_short: get_team_short_from_cell(Enum.fetch!(cells, 12)),
+      team_long: get_team_long_from_cell(Enum.fetch!(cells, 12)),
     }
   end
 
-  ## Cell Getters
+  defp build_player_stat_from_cell(cells, index) do
+    player_stat_type = clean_alpha_string(first_el(elem(Enum.fetch!(cells, index), 2)))
+    player_stat_number = Enum.fetch!(cells, index + 1)
 
+    case player_stat_type do
+      # ints
+      "TCKL" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "SCK" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "FF" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "INT" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "TDS" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "CAR" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "G" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "GS" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+      "REC" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
+
+      # floats
+      "YDS" -> {player_stat_type, get_float_from_cell(player_stat_number)}
+      "RTG" -> {player_stat_type, get_float_from_cell(player_stat_number)}
+      "AVG" -> {player_stat_type, get_float_from_cell(player_stat_number)}
+      nil -> nil
+    end
+  end
+
+  defp clean_alpha_string(str) when is_nil(str), do: nil
+  defp clean_alpha_string(str), do: String.replace(str, ~r/[^a-zA-Z]/, "")
+
+  defp clean_num_string(str) when is_nil(str), do: nil
+  defp clean_num_string(str), do: String.replace(str, ~r/[^0-9]/, "")
+
+  ## Cell Getters
   def get_integer_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_integer_from_cell({_, _, val}), do: String.to_integer(first_el(val))
+  def get_integer_from_cell({_, _, [val]}) do
+    case val do
+      "--" -> 0
+      _ -> String.to_integer(clean_num_string(val))
+    end
+  end
 
   def get_float_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_float_from_cell({_, _, val}), do: String.to_float(first_el(val))
+  def get_float_from_cell({_, _, [val]}) do
+    case val do
+      "--" -> 0
+      _ -> String.to_integer(clean_num_string(val))
+    end
+  end
 
   def get_pos_from_cell({_, _, val}), do: first_el(val)
 
