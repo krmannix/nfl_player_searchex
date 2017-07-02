@@ -27,31 +27,22 @@ defmodule NFLPlayerSearchex.PlayerRow do
     player_stat_type = clean_alpha_string(first_el(elem(Enum.fetch!(cells, index), 2)))
     player_stat_number = Enum.fetch!(cells, index + 1)
 
-    case player_stat_type do
-      # ints
-      "TCKL" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "SCK" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "FF" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "INT" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "TDS" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "CAR" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "G" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "GS" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-      "REC" -> {player_stat_type, get_integer_from_cell(player_stat_number)}
-
-      # floats
-      "YDS" -> {player_stat_type, get_float_from_cell(player_stat_number)}
-      "RTG" -> {player_stat_type, get_float_from_cell(player_stat_number)}
-      "AVG" -> {player_stat_type, get_float_from_cell(player_stat_number)}
-      nil -> nil
+    cond do
+      NFLPlayerSearchex.Stat.integer_stat_type?(player_stat_type) ->
+        {stat_type_to_atom(player_stat_type), get_integer_from_cell(player_stat_number)}
+      NFLPlayerSearchex.Stat.float_stat_type?(player_stat_type) ->
+        {stat_type_to_atom(player_stat_type), get_float_from_cell(player_stat_number)}
+      true -> nil
     end
   end
+
+  defp stat_type_to_atom(player_stat_type), do: NFLPlayerSearchex.Stat.stat_type_to_atom(player_stat_type)
 
   defp clean_alpha_string(str) when is_nil(str), do: nil
   defp clean_alpha_string(str), do: String.replace(str, ~r/[^a-zA-Z]/, "")
 
   defp clean_num_string(str) when is_nil(str), do: nil
-  defp clean_num_string(str), do: String.replace(str, ~r/[^0-9]/, "")
+  defp clean_num_string(str), do: String.replace(str, ~r/[^0-9\.]/, "")
 
   ## Cell Getters
   def get_integer_from_cell({_, _, val}) when length(val) == 0, do: nil
@@ -66,7 +57,7 @@ defmodule NFLPlayerSearchex.PlayerRow do
   def get_float_from_cell({_, _, [val]}) do
     case val do
       "--" -> 0
-      _ -> String.to_integer(clean_num_string(val))
+      _ -> String.to_float(clean_num_string(val))
     end
   end
 
