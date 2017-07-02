@@ -14,7 +14,7 @@ defmodule NFLPlayerSearchex.PlayerRow do
   defp build_basic_player_map(cells) do
     %{
       position: get_pos_from_cell(Enum.fetch!(cells, 0)),
-      jersey_number: get_integer_from_cell(Enum.fetch!(cells, 1)),
+      jersey_number: get_number_from_cell(Enum.fetch!(cells, 1)),
       name: get_name_from_cell(Enum.fetch!(cells, 2)),
       status: get_status_from_cell(Enum.fetch!(cells, 3)),
       status_description: get_status_description_from_cell(Enum.fetch!(cells, 3)),
@@ -27,12 +27,8 @@ defmodule NFLPlayerSearchex.PlayerRow do
     player_stat_type = clean_alpha_string(first_el(elem(Enum.fetch!(cells, index), 2)))
     player_stat_number = Enum.fetch!(cells, index + 1)
 
-    cond do
-      NFLPlayerSearchex.Stat.integer_stat_type?(player_stat_type) ->
-        {stat_type_to_atom(player_stat_type), get_integer_from_cell(player_stat_number)}
-      NFLPlayerSearchex.Stat.float_stat_type?(player_stat_type) ->
-        {stat_type_to_atom(player_stat_type), get_float_from_cell(player_stat_number)}
-      true -> nil
+    unless is_nil(player_stat_type) do
+      {stat_type_to_atom(player_stat_type), get_number_from_cell(player_stat_number)}
     end
   end
 
@@ -45,19 +41,14 @@ defmodule NFLPlayerSearchex.PlayerRow do
   defp clean_num_string(str), do: String.replace(str, ~r/[^0-9\.]/, "")
 
   ## Cell Getters
-  def get_integer_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_integer_from_cell({_, _, [val]}) do
-    case val do
-      "--" -> 0
-      _ -> String.to_integer(clean_num_string(val))
-    end
-  end
-
-  def get_float_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_float_from_cell({_, _, [val]}) do
-    case val do
-      "--" -> 0
-      _ -> String.to_float(clean_num_string(val))
+  def get_number_from_cell({_, _, val}) when length(val) == 0, do: nil
+  def get_number_from_cell({_, _, ["--"]}), do: nil
+  def get_number_from_cell({_, _, [val]}) when is_nil(val), do: nil
+  def get_number_from_cell({_, _, [val]}) do
+    if String.contains?(val, ".") do
+      String.to_float(clean_num_string(val))
+    else
+      String.to_integer(clean_num_string(val))
     end
   end
 
