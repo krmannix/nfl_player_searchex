@@ -1,4 +1,4 @@
-defmodule NFLPlayerSearchex.PlayerRow do
+defmodule NFLPlayerSearchex.Player do
 
   def build_player_from_row({_, _, player_cells}) do
     build_player_from_cells(player_cells)
@@ -14,6 +14,7 @@ defmodule NFLPlayerSearchex.PlayerRow do
   defp build_basic_player_map(cells) do
     %{
       position: get_pos_from_cell(Enum.fetch!(cells, 0)),
+      position_description: get_pos_description_from_cell(Enum.fetch!(cells, 0)),
       jersey_number: get_number_from_cell(Enum.fetch!(cells, 1)),
       name: get_name_from_cell(Enum.fetch!(cells, 2)),
       status: get_status_from_cell(Enum.fetch!(cells, 3)),
@@ -53,6 +54,7 @@ defmodule NFLPlayerSearchex.PlayerRow do
   end
 
   defp get_pos_from_cell({_, _, [val]}), do: val
+  defp get_pos_description_from_cell(val), do: NFLPlayerSearchex.Position.get_position_description_from_position(get_pos_from_cell(val))
 
   defp get_status_from_cell({_, _, [val]}), do: val
 
