@@ -63,7 +63,14 @@ defmodule NFLPlayerSearchex.PlayerRow do
 
   defp get_name_from_cell({_, _, val}) when length(val) == 0, do: nil
   defp get_name_from_cell({_, _, [val]}) when is_tuple(val), do: get_name_from_cell(val)
-  defp get_name_from_cell({_, _, [val]}), do: val
+  defp get_name_from_cell({_, _, [val]}), do: coerce_name_order val
+
+  defp coerce_name_order(val) do
+    String.split(val, ",", parts: 2)
+    |> Enum.reverse
+    |> Enum.join(" ")
+    |> String.trim
+  end
 
   defp get_team_short_from_cell({_, _, val}) when length(val) == 0, do: nil
   defp get_team_short_from_cell({_, _, [val]}) when is_tuple(val), do: get_team_short_from_cell(val)
