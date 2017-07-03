@@ -16,7 +16,7 @@ defmodule NFLPlayerSearchex.Team do
     "HOU" => "Houston Texans",
     "IND" => "Indianapolis Colts",
     "JAX" => "Jacksonville Jaguars",
-    "KAN" => "Kansas City Chiefs",
+    "KC"  => "Kansas City Chiefs",
     "LA"  => "Los Angeles Chargers",
     "MIA" => "Miami Dolphins",
     "MIN" => "Minnesota Vikings",

@@ -24,7 +24,7 @@ defmodule NFLPlayerSearchex.PlayerRow do
   end
 
   defp build_player_stat_from_cell(cells, index) do
-    player_stat_type = clean_alpha_string(first_el(elem(Enum.fetch!(cells, index), 2)))
+    player_stat_type = clean_alpha_string(List.first(elem(Enum.fetch!(cells, index), 2)))
     player_stat_number = Enum.fetch!(cells, index + 1)
 
     unless is_nil(player_stat_type) do
@@ -41,10 +41,10 @@ defmodule NFLPlayerSearchex.PlayerRow do
   defp clean_num_string(str), do: String.replace(str, ~r/[^0-9\.]/, "")
 
   ## Cell Getters
-  def get_number_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_number_from_cell({_, _, ["--"]}), do: nil
-  def get_number_from_cell({_, _, [val]}) when is_nil(val), do: nil
-  def get_number_from_cell({_, _, [val]}) do
+  defp get_number_from_cell({_, _, val}) when length(val) == 0, do: nil
+  defp get_number_from_cell({_, _, ["--"]}), do: nil
+  defp get_number_from_cell({_, _, [val]}) when is_nil(val), do: nil
+  defp get_number_from_cell({_, _, [val]}) do
     if String.contains?(val, ".") do
       String.to_float(clean_num_string(val))
     else
@@ -52,21 +52,21 @@ defmodule NFLPlayerSearchex.PlayerRow do
     end
   end
 
-  def get_pos_from_cell({_, _, val}), do: first_el(val)
+  defp get_pos_from_cell({_, _, [val]}), do: val
 
-  def get_name_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_name_from_cell({_, _, [{_, _, val}]}), do: first_el(val)
+  defp get_status_from_cell({_, _, [val]}), do: val
 
-  def get_status_from_cell({_, _, val}), do: first_el(val)
-  def get_status_description_from_cell({_, _, val}), do: NFLPlayerSearchex.Status.get_status_description_from_status(first_el(val))
+  defp get_status_description_from_cell({_, _, [val]}), do: NFLPlayerSearchex.Status.get_status_description_from_status(val)
 
-  def get_team_short_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_team_short_from_cell({_, _, [{_, _, val}]}), do: first_el(val)
+  defp get_team_long_from_cell({_, _, val}) when length(val) == 0, do: nil
+  defp get_team_long_from_cell(val), do: NFLPlayerSearchex.Team.get_team_long_from_team_short(get_team_short_from_cell(val))
 
-  def get_team_long_from_cell({_, _, val}) when length(val) == 0, do: nil
-  def get_team_long_from_cell(val), do: NFLPlayerSearchex.Team.get_team_long_from_team_short(get_team_short_from_cell(val))
+  defp get_name_from_cell({_, _, val}) when length(val) == 0, do: nil
+  defp get_name_from_cell({_, _, [val]}) when is_tuple(val), do: get_name_from_cell(val)
+  defp get_name_from_cell({_, _, [val]}), do: val
 
-  def first_el(list) when length(list) == 0, do: nil
-  def first_el(list), do: List.first(list)
+  defp get_team_short_from_cell({_, _, val}) when length(val) == 0, do: nil
+  defp get_team_short_from_cell({_, _, [val]}) when is_tuple(val), do: get_team_short_from_cell(val)
+  defp get_team_short_from_cell({_, _, [val]}), do: val
 
 end
