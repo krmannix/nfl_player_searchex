@@ -1,4 +1,5 @@
 defmodule NFLPlayerSearchex.Team do
+  @moduledoc false
 
   @team_long_to_team_short %{
     "ARI" => "Arizona Cardinals",

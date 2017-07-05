@@ -4,14 +4,21 @@ search for nfl players via the official search
 
 ## To Do
 * `v0.3.0`
-  * Add `by_team`
-  * Add atom support for `position`
-  * Add atom support for `team`
-  * Add Credo styling
   * Add documentation
   * Publish to Hex
 * `v0.3.1`
+  * Add `P` & `K` position statistics
+* `v0.3.2`
+  * Add `by_team`
+  * Add atom support for `position`
+  * Add atom support for `team`
+* `v0.3.1`
   * Add `historical` boolean option as keyword list options
+  * Add `conference` atom option as keyword list options for `by_position`
+  * Add Credo styling
+* `v0.4.0`
+  * Add `Player` struct
+  * Add `@spec` documentation
 
 ## Installation
 

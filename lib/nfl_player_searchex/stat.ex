@@ -1,4 +1,6 @@
 defmodule NFLPlayerSearchex.Stat do
+  @moduledoc false
+
   @stat_type_string_to_atom_map %{
     "TCKL" => :tackles,
     "SCK"  => :sacks,

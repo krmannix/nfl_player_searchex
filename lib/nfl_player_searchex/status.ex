@@ -1,4 +1,5 @@
 defmodule NFLPlayerSearchex.Status do
+  @moduledoc false
 
   @status_map %{
     "ACT" => "Active",

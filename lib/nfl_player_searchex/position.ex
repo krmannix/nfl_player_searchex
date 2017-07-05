@@ -1,4 +1,6 @@
 defmodule NFLPlayerSearchex.Position do
+  @moduledoc false
+
   @position_type_string_to_description %{
 
     # Offense

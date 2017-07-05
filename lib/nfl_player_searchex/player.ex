@@ -1,4 +1,5 @@
 defmodule NFLPlayerSearchex.Player do
+  @moduledoc false
 
   def build_player_from_row({_, _, player_cells}) do
     build_player_from_cells(player_cells)
